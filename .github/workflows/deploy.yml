@@ -13,9 +13,9 @@ jobs:
     if: github.repository == 'generalbendi/medplum'
     env:
       NODE_VERSION: '20'
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_REMOTE_ONLY: ${{ secrets.TURBO_REMOTE_ONLY }}
+      # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      # TURBO_REMOTE_ONLY: ${{ secrets.TURBO_REMOTE_ONLY }}
     steps:
       - uses: actions/checkout@v4
         with:
