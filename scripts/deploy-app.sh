@@ -1,11 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-if [[ -z "${APP_BUCKET}" ]]; then
+if [ -z "${APP_BUCKET}" ]; then
   echo "APP_BUCKET is missing"
   exit 1
 fi
 
-pushd packages/app || exit
+# Change to the app directory
+cd packages/app || exit
 
 # First deploy hashed files that are cached forever
 # It is important to deploy these files first,
@@ -74,4 +75,5 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --exclude "*" \
   --include "*.html"
 
-popd || exit
+# Change back to the previous directory
+cd - || exit

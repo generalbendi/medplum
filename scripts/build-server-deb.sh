@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Fail on error
 set -e
@@ -30,8 +30,8 @@ rm -rf "$TMP_DIR"
 rm -rf "$SERVICE_NAME-$VERSION.deb"
 
 # Copy package files
-PACKAGES=("core" "definitions" "fhir-router" "server")
-for package in ${PACKAGES[@]}; do
+PACKAGES="core definitions fhir-router server"
+for package in $PACKAGES; do
   echo "Copy $package"
   mkdir -p "$LIB_DIR/packages/$package"
   cp "packages/$package/package.json" "$LIB_DIR/packages/$package"
@@ -48,20 +48,21 @@ sed -i "s|file:./binary/|file:/var/lib/$SERVICE_NAME/binary/|g" "$ETC_DIR/medplu
 
 # Create the data directory
 mkdir -p "$VAR_DIR/binary"
-echo "Medplum data files" > "$VAR_DIR/README.txt"
+echo "Medplum data files" >"$VAR_DIR/README.txt"
 
 # Move into the working directory
-pushd "$LIB_DIR"
+current_dir=$(pwd)
+cd "$LIB_DIR" || exit
 
 # Install dependencies
 npm i --omit=dev --omit=optional --omit=peer
 
 # Move back to the original directory
-popd
+cd "$current_dir" || exit
 
 # Create the systemd service definition
 mkdir -p "$SYSTEM_DIR"
-cat > "$SYSTEM_DIR/$SERVICE_NAME.service" <<EOF
+cat >"$SYSTEM_DIR/$SERVICE_NAME.service" <<EOF
 [Unit]
 Description=Medplum Server
 After=network.target
@@ -83,7 +84,7 @@ EOF
 mkdir -p "$DEBIAN_DIR"
 
 # Create the Debian control file
-cat > "$DEBIAN_DIR/control" <<EOF
+cat >"$DEBIAN_DIR/control" <<EOF
 Package: $SERVICE_NAME
 Version: $VERSION
 Section: base
@@ -95,7 +96,7 @@ Description: Medplum FHIR Server
 EOF
 
 # Create the Debian post-install script
-cat > "$DEBIAN_DIR/postinst" <<EOF
+cat >"$DEBIAN_DIR/postinst" <<EOF
 #!/bin/sh
 addgroup --system $SERVICE_NAME
 adduser --system --ingroup $SERVICE_NAME $SERVICE_NAME
@@ -105,7 +106,7 @@ systemctl enable $SERVICE_NAME.service
 EOF
 
 # Create the Debian pre-remove script
-cat > "$DEBIAN_DIR/prerm" <<EOF
+cat >"$DEBIAN_DIR/prerm" <<EOF
 #!/bin/sh
 systemctl stop $SERVICE_NAME.service
 systemctl disable $SERVICE_NAME.service
@@ -123,4 +124,3 @@ rm -rf "$TMP_DIR"
 
 # Done
 echo "Done"
-
