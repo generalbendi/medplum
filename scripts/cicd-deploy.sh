@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # CI/CD deploy script
 # This script should only be called from the CI/CD server.
@@ -23,56 +23,56 @@ DEPLOY_SERVER=false
 # Inspect files changed
 #
 
-if [[ "$FILES_CHANGED" =~ build.yml ]]; then
+if echo "$FILES_CHANGED" | grep -q 'build.yml'; then
   DEPLOY_SERVER=true
 fi
 
-if [[ "$FILES_CHANGED" =~ Dockerfile ]]; then
+if echo "$FILES_CHANGED" | grep -q 'Dockerfile'; then
   DEPLOY_SERVER=true
 fi
 
-if [[ "$FILES_CHANGED" =~ cicd-deploy.sh ]]; then
+if echo "$FILES_CHANGED" | grep -q 'cicd-deploy.sh'; then
   DEPLOY_APP=true
   DEPLOY_GRAPHIQL=true
   DEPLOY_SERVER=true
 fi
 
-if [[ "$FILES_CHANGED" =~ deploy-introspection-schema.sh ]]; then
+if echo "$FILES_CHANGED" | grep -q 'deploy-introspection-schema.sh'; then
   DEPLOY_GRAPHIQL=true
 fi
 
-if [[ "$FILES_CHANGED" =~ packages/app ]]; then
+if echo "$FILES_CHANGED" | grep -q 'packages/app'; then
   DEPLOY_APP=true
 fi
 
-if [[ "$FILES_CHANGED" =~ packages/core ]]; then
-  DEPLOY_APP=true
-  DEPLOY_SERVER=true
-fi
-
-if [[ "$FILES_CHANGED" =~ packages/definitions ]]; then
+if echo "$FILES_CHANGED" | grep -q 'packages/core'; then
   DEPLOY_APP=true
   DEPLOY_SERVER=true
 fi
 
-if [[ "$FILES_CHANGED" =~ packages/fhir-router ]]; then
-  DEPLOY_SERVER=true
-fi
-
-if [[ "$FILES_CHANGED" =~ packages/fhirtypes ]]; then
+if echo "$FILES_CHANGED" | grep -q 'packages/definitions'; then
   DEPLOY_APP=true
   DEPLOY_SERVER=true
 fi
 
-if [[ "$FILES_CHANGED" =~ packages/graphiql ]]; then
+if echo "$FILES_CHANGED" | grep -q 'packages/fhir-router'; then
+  DEPLOY_SERVER=true
+fi
+
+if echo "$FILES_CHANGED" | grep -q 'packages/fhirtypes'; then
+  DEPLOY_APP=true
+  DEPLOY_SERVER=true
+fi
+
+if echo "$FILES_CHANGED" | grep -q 'packages/graphiql'; then
   DEPLOY_GRAPHIQL=true
 fi
 
-if [[ "$FILES_CHANGED" =~ packages/server ]]; then
+if echo "$FILES_CHANGED" | grep -q 'packages/server'; then
   DEPLOY_SERVER=true
 fi
 
-if [[ "$FILES_CHANGED" =~ packages/react ]]; then
+if echo "$FILES_CHANGED" | grep -q 'packages/react'; then
   DEPLOY_APP=true
 fi
 
@@ -82,7 +82,8 @@ fi
 
 ESCAPED_COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | sed 's/"/\\"/g')
 
-read -r -d '' PAYLOAD <<- EOM
+PAYLOAD=$(
+  cat <<-EOM
 {
   "text": "Deploying ${ESCAPED_COMMIT_MESSAGE}",
   "blocks": [
@@ -96,6 +97,7 @@ read -r -d '' PAYLOAD <<- EOM
   ]
 }
 EOM
+)
 
 curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHOOK_URL"
 
@@ -103,21 +105,21 @@ curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" "$SLACK_WEBHO
 # Run the appropriate deploy scripts
 #
 
-if [[ "$DEPLOY_APP" = true ]]; then
+if [ "$DEPLOY_APP" = true ]; then
   echo "Deploy app"
   npm run build -- --force --filter=@medplum/app
-  source ./scripts/deploy-app.sh
+  . ./scripts/deploy-app.sh
 fi
 
-if [[ "$DEPLOY_GRAPHIQL" = true ]]; then
+if [ "$DEPLOY_GRAPHIQL" = true ]; then
   echo "Deploy GraphiQL"
   npm run build -- --force --filter=@medplum/graphiql
-  source ./scripts/deploy-graphiql.sh
+  . ./scripts/deploy-graphiql.sh
 fi
 
-if [[ "$DEPLOY_SERVER" = true ]]; then
+if [ "$DEPLOY_SERVER" = true ]; then
   echo "Deploy server"
   npm run build -- --force --filter=@medplum/server
-  source ./scripts/build-docker.sh
-  source ./scripts/deploy-server.sh
+  . ./scripts/build-docker.sh
+  . ./scripts/deploy-server.sh
 fi

@@ -5,7 +5,7 @@ if [[ -z "${APP_BUCKET}" ]]; then
   exit 1
 fi
 
-pushd packages/app
+pushd packages/app || exit
 
 # First deploy hashed files that are cached forever
 # It is important to deploy these files first,
@@ -74,4 +74,4 @@ aws s3 cp dist/ "s3://${APP_BUCKET}/" \
   --exclude "*" \
   --include "*.html"
 
-popd
+popd || exit

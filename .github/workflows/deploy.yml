@@ -56,8 +56,10 @@ jobs:
         run: ./scripts/cicd-deploy.sh
         env:
           APP_BUCKET: ${{ secrets.APP_BUCKET }}
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           DOCKERHUB_REPOSITORY: ${{ secrets.DOCKERHUB_REPOSITORY }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
           ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}

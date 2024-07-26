@@ -68,10 +68,10 @@ fi
 
 # AWS ECR login
 if ! is_logged_in "${ECR_URL}"; then
-  aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_URL}
+  aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin ${ECR_URL}
 else
   echo "Already logged in to AWS ECR."
 fi
 
 # Build and push Docker images
-docker buildx build $PLATFORMS $DOCKERHUB_TAGS $ECR_TAGS --push .
+docker buildx build "$PLATFORMS" "$DOCKERHUB_TAGS" "$ECR_TAGS" --push .
