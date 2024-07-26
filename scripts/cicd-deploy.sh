@@ -15,9 +15,9 @@ echo "$COMMIT_MESSAGE"
 FILES_CHANGED=$(git diff --name-only HEAD HEAD~1)
 echo "$FILES_CHANGED"
 
-DEPLOY_APP=false
-DEPLOY_GRAPHIQL=false
-DEPLOY_SERVER=false
+DEPLOY_APP=true
+DEPLOY_GRAPHIQL=true
+DEPLOY_SERVER=true
 
 #
 # Inspect files changed
