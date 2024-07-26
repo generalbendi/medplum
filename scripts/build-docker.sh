@@ -61,7 +61,7 @@ is_logged_in() {
 
 # Docker Hub login
 if ! is_logged_in "index.docker.io"; then
-  echo "${DOCKERHUB_PASSWORD}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
+  echo "${DOCKERHUB_TOKEN}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
 else
   echo "Already logged in to Docker Hub."
 fi
