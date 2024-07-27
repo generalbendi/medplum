@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
 
 # Ensure all necessary environment variables are set
-for var in ECR_REPOSITORY AWS_ACCOUNT_ID AWS_REGION DOCKERHUB_REPOSITORY DOCKERHUB_USERNAME DOCKERHUB_PASSWORD; do
-  if [ -z "${var}" ]; then
+for var in ECR_REPOSITORY AWS_ACCOUNT_ID AWS_REGION DOCKERHUB_REPOSITORY DOCKERHUB_USERNAME DOCKERHUB_TOKEN; do
+  eval "value=\$$var"
+  if [ -z "$value" ]; then
     echo "$var is missing"
     exit 1
   fi
@@ -56,11 +57,11 @@ done
 # Function to check Docker login status
 is_logged_in() {
   registry="$1"
-  docker info --format '{{json .AuthConfig }}' | jq -r ".\"${registry}\".Auth" | grep -qv null
+  docker info --format '{{json .AuthConfig}}' | jq -r ".auths[\"${registry}\"].auth" | grep -qv null
 }
 
 # Docker Hub login
-if ! is_logged_in "index.docker.io"; then
+if ! is_logged_in "https://index.docker.io/v1/"; then
   echo "${DOCKERHUB_TOKEN}" | docker login --username "${DOCKERHUB_USERNAME}" --password-stdin
 else
   echo "Already logged in to Docker Hub."

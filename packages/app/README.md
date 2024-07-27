@@ -21,7 +21,7 @@ When building and running the app from source, config settings are loaded from e
 
 | Name                       | Description                                                                                | Required |
 | -------------------------- | ------------------------------------------------------------------------------------------ | -------- |
-| `MEDPLUM_BASE_URL`         | The base URL of the API server for all API calls. For example, "https://api.medplum.com/". | yes      |
+| `MEDPLUM_BASE_URL`         | The base URL of the API server for all API calls. For example, "<https://api.medplum.com/>". | yes      |
 | `MEDPLUM_CLIENT_ID`        | Optional Medplum client application ID.                                                    | no       |
 | `GOOGLE_CLIENT_ID`         | Optional Google client application ID for Google Auth.                                     | no       |
 | `RECAPTCHA_SITE_KEY`       | Optional reCAPTCHA site key for reCAPTCHA user verification.                               | no       |

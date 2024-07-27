@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-if [[ -z "${ECS_CLUSTER}" ]]; then
+if [ -z "${ECS_CLUSTER}" ]; then
   echo "ECS_CLUSTER is missing"
   exit 1
 fi
 
-if [[ -z "${ECS_SERVICE}" ]]; then
+if [ -z "${ECS_SERVICE}" ]; then
   echo "ECS_SERVICE is missing"
   exit 1
 fi
