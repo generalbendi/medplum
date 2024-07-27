@@ -74,7 +74,5 @@ else
   echo "Already logged in to AWS ECR."
 fi
 
-# Build and push Docker images for each platform
-for platform in $PLATFORMS; do
-  docker buildx build --platform "$platform" "$DOCKERHUB_TAGS" "$ECR_TAGS" --push .
-done
+# Build and push Docker images
+docker buildx build --platform "$PLATFORMS" --tag "$DOCKERHUB_REPOSITORY:latest" --tag "$ECR_URL:latest" --push .
