@@ -2,7 +2,7 @@
 
 # Ensure all necessary environment variables are set
 for var in ECR_REPOSITORY AWS_ACCOUNT_ID AWS_REGION DOCKERHUB_REPOSITORY DOCKERHUB_USERNAME DOCKERHUB_TOKEN; do
-  eval "value=\$$var"
+  value=$(eval echo \$$var)
   if [ -z "$value" ]; then
     echo "$var is missing"
     exit 1
@@ -32,7 +32,7 @@ tar \
   packages/server/dist
 
 # Target platforms
-PLATFORMS="--platform linux/amd64,linux/arm64,linux/arm/v7"
+PLATFORMS="linux/amd64" # "linux/arm64 linux/arm/v7"
 
 # Docker Hub tags
 DOCKERHUB_TAGS="--tag $DOCKERHUB_REPOSITORY:latest"
@@ -74,5 +74,7 @@ else
   echo "Already logged in to AWS ECR."
 fi
 
-# Build and push Docker images
-docker buildx build "${PLATFORMS}" "${DOCKERHUB_TAGS}" "${ECR_TAGS}" --push .
+# Build and push Docker images for each platform
+for platform in $PLATFORMS; do
+  docker buildx build --platform "$platform" "$DOCKERHUB_TAGS" "$ECR_TAGS" --push .
+done
